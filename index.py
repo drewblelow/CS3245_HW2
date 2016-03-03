@@ -79,7 +79,7 @@ def writeout():
 	pointer = 0
 	for word in DICTIONARY:
 		postings = DICTIONARY[word]
-		write_dic.write(word + ' ' + str(pointer))
+		write_dic.write(word + '^' + str(pointer)  + ' ')
 		for item in postings:
 			write_pos.write(item)
 		write_pos.write('\n')
