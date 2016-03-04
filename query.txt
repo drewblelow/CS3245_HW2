@@ -1,1 +1,4 @@
-degussa AND woods
+mdbl OR hanging
+hanging AND (NOT mdbl)
+hanging AND hanging
+woods

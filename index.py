@@ -79,14 +79,16 @@ def index_file(file):
 def writeout():
 	write_dic = open(dictionary_file, 'w')
 	write_pos = open(postings_file, 'w')
-	pointer = 0
 	for word in DICTIONARY:
 		postings = DICTIONARY[word]
-		write_dic.write(word + '^' + str(pointer)  + ' ')
+		pointer = write_pos.tell()
 		for item in postings:
-			write_pos.write(item)
+			write_pos.write(item + " ")
+		write_dic.write(word + "^" + str(pointer) + " "),
 		write_pos.write('\n')
-		pointer += 1
-
+	write_dic.write("\n")
+	for file in files_to_index:
+		filename = basename(file)
+		write_dic.write(filename + " ")
 #lines below run the methods defined above	
 indexer()

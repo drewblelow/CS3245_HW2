@@ -30,6 +30,7 @@ OPERATORS = {
     "AND" : (5, LEFT_ASSOC),
     "NOT" : (10, RIGHT_ASSOC)
 }
+LIST_DOC = []
 
 #specified settings
 try:
@@ -57,22 +58,30 @@ if dictionary_file == None or postings_file == None or query_file == None or out
 #load dictionary into memory
 def load_dic():
 	print("loading dictionary into memory..."),
-	dic = open(dictionary_file, 'r').readline()
+	dic_file = open(dictionary_file, 'r')
+	dic = dic_file.readline()
 	entries = dic.split()
 	for entry in entries:
 		item = entry.split('^')
 		word = item[0]
 		index = item[1]
 		DICTIONARY[word] = index
+	all_files = dic_file.readline()
+	a = all_files.split()
+	for x in a:
+		LIST_DOC.append(x)
 	print("[DONE]")
 
 #wrapper method reads all queries in the file
 def read_queries():
 	print("reading and searching queries..."),
 	query_lines = open(query_file).readlines()
-	for query in query_lines:
+	out_write = open(output_file, 'w')
+	for query in query_lines:	
+		print("once")
 		line = parse(query)
-		evaluate(line)
+		result = evaluate(line)
+		out_write.write(result + "\n")
 	print("[DONE]")
 	
 #parses the query 	
@@ -90,9 +99,77 @@ def parse(input):
 
 #evaluates the parsed query
 def evaluate(input):
+	read_dic = open(dictionary_file, "r")
+	seek_pos = open(postings_file, "r")
+	end_set = []
+	temp_set = []
+	print(input)
+	print(len(input))
+	if len(input) == 0:
+		print("invalid query: empty")
+		sys.exit(2)
+	word = input.pop(0)
+	if word in DICTIONARY:
+		pointer = DICTIONARY[word]
+		print(word),
+		print("pointer"),
+		print(pointer)
+		seek_pos.seek(int(pointer))
+		line = seek_pos.readline()
+		print(line)
+		end_set = line.split()
+		seek_pos.seek(0,0)
+	while len(input) != 0:
+		print(len(input))
+		current = input.pop(0)
+		if isOperator(current):
+			if current == "AND":
+				temp = intersect(end_set, temp_set)
+				end_set = temp
+			if current == "OR":
+				temp = union(end_set, temp_set)
+				end_set = temp
+			if current == "NOT":
+				temp = negation(temp_set)
+				temp_set = temp
+		elif current in DICTIONARY:
+			pointer = DICTIONARY[current]
+			print(current),
+			print("pointer"),
+			print(pointer)
+			seek_pos.seek(int(pointer))
+			line = seek_pos.readline()
+			print(line)
+			temp_set = line.split()
+			seek_pos.seek(0,0)
+		else:
+			temp_set = []
+	unique(end_set)
+	write_string = set_to_string(end_set)
+	return write_string
 	
-	out_writer = open(output_file, 'w')
+#strips duplicates if present
+def unique(a):
+	return list(set(a))
+	
+#BOOLEAN AND	
+def intersect(a, b):
+	return list(set(a) & set(b))
+	
+#BOOLEAN OR
+def union(a, b):
+	return list(set(a) | set(b))
 
+#BOOLEAN NOT (with complete LIST_DOC)
+def negation(a):
+	b = [e for e in LIST_DOC if e not in a]
+	return b
+	
+#method converts a set into the format specified by submission requirements
+def set_to_string(set):
+	string = " ".join(str(item) for item in set)
+	return string
+	
 #changes the format of query, infix to rpn
 def toRPN(query):
 	output = []

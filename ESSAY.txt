@@ -1,0 +1,25 @@
+1. You will observe that a large portion of the terms in the dictionary are numbers.
+ However, we normally do not use numbers as query terms to search. Do you think it 
+ is a good idea to remove these number entries from the dictionary and the postings 
+ lists? Can you propose methods to normalize these numbers? How many percentage of reduction in disk storage do you observe after
+removing/normalizing these numbers?
+
+Personally, I think it is a good idea to remove numvers from the dictionary as I used
+regex findall method to only view words in the dictionary. Unless the numbers are
+specific(i.e dates), most number combinations do not appear frequently and waste space.
+Furthermore, certain typing styles have spaces or decimals between numbers (i.e 10 000.5)
+which may complicate tokenisation
+
+2. What do you think will happen if we remove stop words from the dictionary and 
+postings file? How does it affect the searching phase?
+Dictionary and postings size will reduce. If pointers are well implemented, searching
+will not be affected much as most users of boolean search try not to use stopwords
+in their searches in the first place
+
+3. The NLTK tokenizer may not correctly tokenize all terms. What do you observe 
+from the resulting terms produced by sent_tokenize() and word_tokenize() ? 
+Can you propose rules to further refine these results?
+Due to time constrains I did not experiment with the tokenisers (I used regex in my assignment).
+However, after looking at the api i can guess that the dictionary might be bloated with symbols 
+(especially in the case of the twitter tokeniser)
+API was at http://www.nltk.org/api/nltk.tokenize.html
