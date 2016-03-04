@@ -18,6 +18,8 @@ def usage():
 directory_path = "D:\\Python27\\Lib\\site-packages\\nltk\\nltk_data\\corpora\\reuters\\training"
 dictionary_file = "dictionary.txt"
 postings_file = "postings.txt"
+
+#variables
 DICTIONARY = {}
 
 #specified settings
@@ -64,7 +66,8 @@ def index_file(file):
 	filetxt = open(filepath).read()
 	words = re.findall(r"[a-zA-Z]+(?:'[a-z])?", filetxt)
 	#words are split by regex (by spaces and punctuation), then entered into the dict
-	for word in words:
+	for item in words:
+		word = str.lower(item)
 		if word in DICTIONARY:
 			postings = DICTIONARY[word]
 			if filename not in postings:
