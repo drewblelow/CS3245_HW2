@@ -1,4 +1,2 @@
 mdbl OR hanging
-hanging AND (NOT mdbl)
-hanging AND hanging
-woods
+hanging AND (woods OR NOT mdbl)

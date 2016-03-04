@@ -87,8 +87,20 @@ def read_queries():
 #parses the query 	
 def parse(input):
 	tokenised = input.split()
-	copy = []
+	temp =[]
 	for token in tokenised:
+		if "(" in token:
+			word = token.strip('(')
+			temp.append('(')
+			temp.append(word)
+		elif ")" in token:
+			word = token.strip(')')
+			temp.append(word)
+			temp.append(')')
+		else:
+			temp.append(token)
+	copy = []
+	for token in temp:
 		if token != "AND" and token != "OR" and token != "NOT":
 			current = str.lower(token)
 		else:
@@ -117,21 +129,23 @@ def evaluate(input):
 		seek_pos.seek(int(pointer))
 		line = seek_pos.readline()
 		print(line)
-		end_set = line.split()
+		temp_set = line.split()
+		end_set.append(temp_set)
 		seek_pos.seek(0,0)
 	while len(input) != 0:
 		print(len(input))
 		current = input.pop(0)
 		if isOperator(current):
 			if current == "AND":
-				temp = intersect(end_set, temp_set)
-				end_set = temp
-			if current == "OR":
-				temp = union(end_set, temp_set)
-				end_set = temp
-			if current == "NOT":
-				temp = negation(temp_set)
+				temp = intersect(end_set[-1], end_set[-2])
 				temp_set = temp
+			if current == "OR":
+				temp = union(end_set[-1], end_set[-2])
+				temp_set = temp
+			if current == "NOT":
+				temp = negation(end_set[-1])
+				temp_set = temp
+				end_set.append(temp_set)
 		elif current in DICTIONARY:
 			pointer = DICTIONARY[current]
 			print(current),
@@ -141,11 +155,13 @@ def evaluate(input):
 			line = seek_pos.readline()
 			print(line)
 			temp_set = line.split()
+			end_set.append(temp_set)
 			seek_pos.seek(0,0)
 		else:
 			temp_set = []
-	unique(end_set)
-	write_string = set_to_string(end_set)
+			end_set.append(temp_set)
+	unique(end_set[0])
+	write_string = set_to_string(end_set[0])
 	return write_string
 	
 #strips duplicates if present
@@ -176,7 +192,7 @@ def toRPN(query):
 	stack = []
 	for token in query:
 		if isOperator(token):
-			while len(stack) != 0 and isOperator(token):
+			while len(stack) != 0 and isOperator(stack[-1]):
 				if (isAssoc(token, LEFT_ASSOC) and precedence(token, stack[-1]) <= 0) or (isAssoc(token, RIGHT_ASSOC) and precedence(token, stack[-1]) < 0):
 					output.append(stack.pop())
 					continue
@@ -192,23 +208,22 @@ def toRPN(query):
 			output.append(token)
 	while len(stack) != 0:
 		output.append(stack.pop())
+	print(output)
 	return output
 		
 #shunting yard helpers
 #check if token is operator
 def isOperator(token):
-	return token in OPERATORS
+	return token in OPERATORS.keys()
 
 #check associativity of operator
 def isAssoc(token, assoc):
-	return OPERATORS[token][1] == assoc
+    return OPERATORS[token][1] == assoc
 
 #compare precedence of operators
-def precedence(t1, t2):
-	return OPERATORS[t1][0] - OPERATORS[t2][0]
+def precedence(token1, token2):
+    return OPERATORS[token1][0] - OPERATORS[token2][0]
 	
 #run the methods declared above
 load_dic()
 read_queries()
-#print(str.lower("TEST"))
-#print(parse("ASDF AND qwerty"))

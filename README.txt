@@ -5,8 +5,6 @@ This is the README file for A0110649J's submission
 Main submission file: 
 index.py : indexer, builds dic and postings
 search.py^ : performs boolean search
-
-^search.py eg query : asdf AND qwer OR ( NOT hjkl ) AND zxc 
 == Files included with this submission ==
 
 ESSAY.txt
