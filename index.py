@@ -64,10 +64,10 @@ def index_file(file):
 	filename = basename(file)
 	filepath = directory_path + os.path.sep + filename
 	filetxt = open(filepath).read()
-	words = re.findall(r"[a-zA-Z]+(?:'[a-z])?", filetxt)
 	#words are split by regex (by spaces and punctuation), then entered into the dict
-	for item in words:
-		word = str.lower(item)
+	words = re.findall(r"[a-zA-Z]+(?:'[a-z])?", filetxt)
+	words = [element.lower() for element in words]
+	for word in words:
 		if word in DICTIONARY:
 			postings = DICTIONARY[word]
 			if filename not in postings:

@@ -24,14 +24,11 @@ output_file = "out.txt"
 DICTIONARY = {}
 LEFT_ASSOC = 0
 RIGHT_ASSOC = 1
-#representation of boolean operators are symbols + * -
+#representation of boolean operators
 OPERATORS = { 
-	#OR REPRESENTATION
-	'+' : (0, LEFT_ASSOC),
-	#AND REPRESENTATION
-    '*' : (5, LEFT_ASSOC),
-	#NOT REPRESENTATION
-    '-' : (10, RIGHT_ASSOC)
+	"OR" : (0, LEFT_ASSOC),
+    "AND" : (5, LEFT_ASSOC),
+    "NOT" : (10, RIGHT_ASSOC)
 }
 
 #specified settings
@@ -79,14 +76,20 @@ def read_queries():
 	print("[DONE]")
 	
 #parses the query 	
-def parse(string):
-	tokenised = string.split()
-	output = toRPN(tokenised)
+def parse(input):
+	tokenised = input.split()
+	copy = []
+	for token in tokenised:
+		if token != "AND" and token != "OR" and token != "NOT":
+			current = str.lower(token)
+		else:
+			current = token
+		copy.append(current)
+	output = toRPN(copy)
 	return output
 
 #evaluates the parsed query
-def evaluate(string):
-	print("TODO: evaluate search")
+def evaluate(input):
 	
 	out_writer = open(output_file, 'w')
 
@@ -96,9 +99,9 @@ def toRPN(query):
 	stack = []
 	for token in query:
 		if isOperator(token):
-			while len(stack) != 0 and isOperator(token)
+			while len(stack) != 0 and isOperator(token):
 				if (isAssoc(token, LEFT_ASSOC) and precedence(token, stack[-1]) <= 0) or (isAssoc(token, RIGHT_ASSOC) and precedence(token, stack[-1]) < 0):
-					out.append(stack.pop())
+					output.append(stack.pop())
 					continue
 				break
 			stack.append(token)
@@ -106,27 +109,29 @@ def toRPN(query):
 			stack.append(token)
 		elif token == ')':
 			while len(stack) != 0 and stack[-1] != '(':
-				out.append(stack.pop())
+				output.append(stack.pop())
 			stack.pop()
 		else:
-			out.append(token)
-	while len(stack) != 0
-		out.append(stack.pop())
-	return out
+			output.append(token)
+	while len(stack) != 0:
+		output.append(stack.pop())
+	return output
 		
 #shunting yard helpers
-#check if operator
+#check if token is operator
 def isOperator(token):
 	return token in OPERATORS
 
-#check associativity
+#check associativity of operator
 def isAssoc(token, assoc):
 	return OPERATORS[token][1] == assoc
 
-#compare precedence
-	return OPERATORS[t1][0] - OPERATORS[t2][0]
+#compare precedence of operators
 def precedence(t1, t2):
-
+	return OPERATORS[t1][0] - OPERATORS[t2][0]
+	
 #run the methods declared above
 load_dic()
 read_queries()
+#print(str.lower("TEST"))
+#print(parse("ASDF AND qwerty"))
